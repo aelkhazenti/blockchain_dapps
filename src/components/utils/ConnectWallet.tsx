@@ -15,12 +15,20 @@ type ButtonProps = {
   setWallet: Dispatch<SetStateAction<any>>;
   setUserAddress: Dispatch<SetStateAction<string>>;
   setUserBalance: Dispatch<SetStateAction<number>>;
-  setStorage: Dispatch<SetStateAction<number>>;
+  setCandidateAVotes: Dispatch<SetStateAction<number>>;
+  setCandidateBVotes: Dispatch<SetStateAction<number>>;
+  setTotalVotes: Dispatch<SetStateAction<number>>;
   contractAddress: string;
   setBeaconConnection: Dispatch<SetStateAction<boolean>>;
   setPublicToken: Dispatch<SetStateAction<string | null>>;
   wallet: BeaconWallet;
 };
+
+function storeToLocalStorage(conA: number, conB: number, totalV: number) {
+  localStorage.setItem("candidateA", conA.toString());
+  localStorage.setItem("candidateB", conB.toString());
+  localStorage.setItem("totalVote", totalV.toString());
+}
 
 const ConnectButton = ({
   Tezos,
@@ -28,7 +36,9 @@ const ConnectButton = ({
   setWallet,
   setUserAddress,
   setUserBalance,
-  setStorage,
+  setCandidateAVotes,
+  setCandidateBVotes,
+  setTotalVotes,
   contractAddress,
   setBeaconConnection,
   setPublicToken,
@@ -43,7 +53,11 @@ const ConnectButton = ({
     const contract = await Tezos.wallet.at(contractAddress);
     const storage: any = await contract.storage();
     setContract(contract);
-    setStorage(storage.toNumber());
+    storeToLocalStorage(storage.candidateA_votes.toNumber(),storage.candidateB_votes.toNumber(),storage.total_votes.toNumber())
+    console.log(balance)
+    setCandidateAVotes(storage.candidateA_votes.toNumber());
+    setCandidateBVotes(storage.candidateB_votes.toNumber());
+    setTotalVotes(storage.total_votes.toNumber());
   };
 
   const connectWallet = async (): Promise<void> => {
@@ -62,6 +76,8 @@ const ConnectButton = ({
       console.log(error);
     }
   };
+
+
 
   useEffect(() => {
     (async () => {
@@ -91,5 +107,7 @@ const ConnectButton = ({
     </div>
   );
 };
+
+
 
 export default ConnectButton;

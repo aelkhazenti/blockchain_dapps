@@ -1,5 +1,6 @@
 import React, { useState, Dispatch, SetStateAction } from "react";
 import { TezosToolkit, WalletContract } from "@taquito/taquito";
+import { Button } from "@nextui-org/react";
 
 interface vote_for_candidate_B_Props {
   contract: WalletContract | any;
@@ -9,14 +10,15 @@ interface vote_for_candidate_B_Props {
   setStorage: Dispatch<SetStateAction<number>>;
 }
 
-const vote_for_candidate_B = ({ contract, setUserBalance, Tezos, userAddress, setStorage }: vote_for_candidate_B_Props) => {
+const Vote_for_candidate_B = ({ contract, setUserBalance, Tezos, userAddress, setStorage }: vote_for_candidate_B_Props) => {
   const [loadingIncrement, setLoadingIncrement] = useState<boolean>(false);
   const [loadingDecrement, setLoadingDecrement] = useState<boolean>(false);
 
   const votforB = async (): Promise<void> => {
+
     setLoadingIncrement(true);
     try {
-      const op = await contract.methods.increment(1).send();
+      const op = await contract.methods.vote_for_candidate_B().send();
       await op.confirmation();
       const newStorage: any = await contract.storage();
       if (newStorage) setStorage(newStorage.toNumber());
@@ -30,20 +32,10 @@ const vote_for_candidate_B = ({ contract, setUserBalance, Tezos, userAddress, se
 
   if (!contract && !userAddress) return <div>&nbsp;</div>;
   return (
-    <div className="buttons">
-      <button className="button" disabled={loadingIncrement} onClick={votforB}>
-        {loadingIncrement ? (
-          <span>
-            <i className="fas fa-spinner fa-spin"></i>&nbsp; Please wait
-          </span>
-        ) : (
-          <span>
-            <i className="fas fa-plus"></i>&nbsp; vote for Tangerine
-          </span>
-        )}
-      </button>
-    </div>
+    <Button color="primary" variant="ghost" onClick={votforB}>
+    Vote For B
+  </Button>
   );
 };
 
-export default vote_for_candidate_B;
+export default Vote_for_candidate_B;

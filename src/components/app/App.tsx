@@ -1,232 +1,215 @@
 import React, { useState } from "react";
-import { TezosToolkit } from "@taquito/taquito";
-import Nav  from "../navbar/navbar";
+import {Navbar, NavbarBrand, NavbarContent, NavbarItem, Link, Button} from "@nextui-org/react";
 import ConnectButton from "../utils/ConnectWallet";
 import DisconnectButton from "../utils/DisconnectWallet";
-import qrcode from "qrcode-generator";
-import UpdateContract from "../utils/UpdateContract";
-import Transfers from "../utils/Transfers";
+import {AcmeLogo} from "./logo";
+import { TezosToolkit } from "@taquito/taquito";
+import {Card, CardBody, CardFooter, Image} from "@nextui-org/react";
 
-enum BeaconConnection {
-  NONE = "",
-  LISTENING = "Listening to P2P channel",
-  CONNECTED = "Channel connected",
-  PERMISSION_REQUEST_SENT = "Permission request sent, waiting for response",
-  PERMISSION_REQUEST_SUCCESS = "Wallet is connected",
+import Vote_for_candidate_A from "../utils/VoteForA"
+import Vote_for_candidate_B from "../utils/VoteForB"
+
+export default function Toti() {
+
+    const [Tezos, setTezos] = useState<TezosToolkit>(
+        new TezosToolkit("https://ghostnet.ecadinfra.com")
+      );
+      const [contract, setContract] = useState<any>(undefined);
+      const [publicToken, setPublicToken] = useState<string | null>(null);
+      const [wallet, setWallet] = useState<any>(null);
+      const [userAddress, setUserAddress] = useState<string>("");
+      const [userBalance, setUserBalance] = useState<number>(0);
+      const [storage, setStorage] = useState<number>(0);
+      const [copiedPublicToken, setCopiedPublicToken] = useState<boolean>(false);
+      const [beaconConnection, setBeaconConnection] = useState<boolean>(false);
+      const [activeTab, setActiveTab] = useState<string>("transfer");
+      const [candidateA_votes, setCandidateAVotes] = useState(0);
+      const [candidateB_votes, setCandidateBVotes] = useState(0);
+      const [totalevotes, setTotalVotes] = useState(0);
+    
+      // Ghostnet Increment/Decrement contract
+    //   const contractAddress: string = "KT1A4Xqb17bhA4ohnTkxacHVx5mmmJdtTRzU"
+      const contractAddress: string = "KT1Suoju5rDRNDDUnNdSUXmtC891F5QAvsM5"
+    
+      const generateQrCode = (): { __html: string } => {
+        const qr = qrcode(0, "L");
+        qr.addData(publicToken || "");
+        qr.make();
+    
+        return { __html: qr.createImgTag(4) };
+      };
+
+      if (userAddress && !isNaN(userBalance)) {
+        return (
+            <><Navbar position="static">
+                <NavbarBrand>
+                    <AcmeLogo />
+                    <p className="font-bold text-inherit">Les enneigés</p>
+                </NavbarBrand>
+                <NavbarContent className=" sm:flex gap-4" justify="center">
+                    <NavbarItem>
+                        <Link color="foreground" href={`https://ghostnet.tzkt.io/${userAddress}/operations/`}>
+                            {userAddress}
+                        </Link>
+                    </NavbarItem>
+                    <NavbarItem isActive>
+                        <Link href="#" aria-current="page">
+                            {(userBalance / 1000000).toLocaleString("en-US")} ꜩ
+                        </Link>
+                    </NavbarItem>
+                    <NavbarItem>
+                        <Link color="foreground" href={`https://better-call.dev/ghostnet/${contractAddress}/operations`}>
+                            {contractAddress}
+                        </Link>
+                    </NavbarItem>
+                </NavbarContent>
+                <NavbarContent justify="end">
+                    <NavbarItem className="hidden lg:flex">
+                        <Link href="#">Login</Link>
+                    </NavbarItem>
+                    <NavbarItem>
+                        <DisconnectButton
+                            wallet={wallet}
+                            setPublicToken={setPublicToken}
+                            setUserAddress={setUserAddress}
+                            setUserBalance={setUserBalance}
+                            setWallet={setWallet}
+                            setTezos={setTezos}
+                            setBeaconConnection={setBeaconConnection} />
+                    </NavbarItem>
+                </NavbarContent>
+            </Navbar><div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+
+                    <Card shadow="sm" isPressable onPress={() => console.log("item pressed")}>
+                        <CardBody className="overflow-visible">
+                            <Image
+                                shadow="sm"
+                                radius="lg"
+                                width="40%"
+                                alt="Orange"
+                                className="w-full object-cover h-[140px]"
+                                src="https://nextui.org/images/fruit-1.jpeg" />
+                        </CardBody>
+                        <CardFooter className="text-small justify-between">
+                            <b>Orange --- { candidateA_votes }</b>
+                            <p className="text-default-300">
+                                <Vote_for_candidate_A
+                                    contract={contract}
+                                    setUserBalance={setUserBalance}
+                                    Tezos={Tezos}
+                                    userAddress={userAddress}
+                                    setStorage={setStorage} />
+                            </p>
+                        </CardFooter>
+                    </Card>
+
+                    <Card shadow="sm" isPressable onPress={() => console.log("item pressed")}>
+                        <CardBody className="overflow-visible">
+                            <Image
+                                shadow="sm"
+                                radius="lg"
+                                width="40%"
+                                alt="Tangerine"
+                                className="w-full object-cover h-[140px]"
+                                src="https://nextui.org/images/fruit-2.jpeg" />
+                        </CardBody>
+                        <CardFooter className="text-small justify-between">
+                            <b>Tangerine --- { candidateB_votes }</b>
+                            <p className="text-default-300">
+                                <Vote_for_candidate_B
+                                    contract={contract}
+                                    setUserBalance={setUserBalance}
+                                    Tezos={Tezos}
+                                    userAddress={userAddress}
+                                    setStorage={setStorage} />
+                            </p>
+                        </CardFooter>
+                    </Card>
+
+                </div></>
+          );
+      }
+      else if (!publicToken && !userAddress && !userBalance) {
+        return (
+            <><Navbar position="static">
+                <NavbarBrand>
+                    <AcmeLogo />
+                    <p className="font-bold text-inherit">Les enneigés </p>
+                </NavbarBrand>
+
+                <NavbarContent justify="end">
+                    <NavbarItem className="hidden lg:flex">
+                        <Link href="#">Login</Link>
+                    </NavbarItem>
+                    <NavbarItem>
+                        <ConnectButton
+                            Tezos={Tezos}
+                            setContract={setContract}
+                            setPublicToken={setPublicToken}
+                            setWallet={setWallet}
+                            setUserAddress={setUserAddress}
+                            setUserBalance={setUserBalance}
+                            setCandidateAVotes={setCandidateAVotes}
+                            setCandidateBVotes={setCandidateBVotes}
+                            setTotalVotes={setTotalVotes}
+                            contractAddress={contractAddress}
+                            setBeaconConnection={setBeaconConnection}
+                            wallet={wallet} />
+                    </NavbarItem>
+                </NavbarContent>
+            </Navbar><div className="gap-2 grid grid-cols-2 sm:grid-cols-4">
+
+                    <Card shadow="sm" isPressable onPress={() => console.log("item pressed")}>
+                        <CardBody className="overflow-visible">
+                            <Image
+                                shadow="sm"
+                                radius="lg"
+                                width="40%"
+                                alt="Orange"
+                                className="w-full object-cover h-[140px]"
+                                src="https://nextui.org/images/fruit-1.jpeg" />
+                        </CardBody>
+                        <CardFooter className="text-small justify-between">
+                            <b>Orange</b>
+                            <p className="text-default-300">
+                                <Vote_for_candidate_A
+                                    contract={contract}
+                                    setUserBalance={setUserBalance}
+                                    Tezos={Tezos}
+                                    userAddress={userAddress}
+                                    setStorage={setStorage} />
+                            </p>
+                        </CardFooter>
+                    </Card>
+
+                    <Card shadow="sm" isPressable onPress={() => console.log("item pressed")}>
+                        <CardBody className="overflow-visible">
+                            <Image
+                                shadow="sm"
+                                radius="lg"
+                                width="40%"
+                                alt="Tangerine"
+                                className="w-full object-cover h-[140px]"
+                                src="https://nextui.org/images/fruit-2.jpeg" />
+                        </CardBody>
+                        <CardFooter className="text-small justify-between">
+                            <b>Tangerine {} </b>
+                            <p className="text-default-300">
+                                <Vote_for_candidate_B
+                                    contract={contract}
+                                    setUserBalance={setUserBalance}
+                                    Tezos={Tezos}
+                                    userAddress={userAddress}
+                                    setStorage={setStorage} />
+                            </p>
+                        </CardFooter>
+                    </Card>
+
+                </div></>
+            
+          );
+      } else {
+
+      }
+
 }
-
-const App = () => {
-  const [Tezos, setTezos] = useState<TezosToolkit>(
-    new TezosToolkit("https://ghostnet.ecadinfra.com")
-  );
-  const [contract, setContract] = useState<any>(undefined);
-  const [publicToken, setPublicToken] = useState<string | null>(null);
-  const [wallet, setWallet] = useState<any>(null);
-  const [userAddress, setUserAddress] = useState<string>("");
-  const [userBalance, setUserBalance] = useState<number>(0);
-  const [storage, setStorage] = useState<number>(0);
-  const [copiedPublicToken, setCopiedPublicToken] = useState<boolean>(false);
-  const [beaconConnection, setBeaconConnection] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<string>("transfer");
-
-  // Ghostnet Increment/Decrement contract
-  const contractAddress: string = "KT1QMGSLynvwwSfGbaiJ8gzWHibTCweCGcu8";
-
-  const generateQrCode = (): { __html: string } => {
-    const qr = qrcode(0, "L");
-    qr.addData(publicToken || "");
-    qr.make();
-
-    return { __html: qr.createImgTag(4) };
-  };
-
-  if (publicToken && (!userAddress || isNaN(userBalance))) {
-    return (
-      <div className="main-box">
-        <h1>Taquito React template</h1>
-        <div id="dialog">
-          <header>Try the Taquito React template!</header>
-          <div id="content">
-            <p className="text-align-center">
-              <i className="fas fa-broadcast-tower"></i>&nbsp; Connecting to
-              your wallet
-            </p>
-            <div
-              dangerouslySetInnerHTML={generateQrCode()}
-              className="text-align-center"
-            ></div>
-            <p id="public-token">
-              {copiedPublicToken ? (
-                <span id="public-token-copy__copied">
-                  <i className="far fa-thumbs-up"></i>
-                </span>
-              ) : (
-                <span
-                  id="public-token-copy"
-                  onClick={() => {
-                    if (publicToken) {
-                      navigator.clipboard.writeText(publicToken);
-                      setCopiedPublicToken(true);
-                      setTimeout(() => setCopiedPublicToken(false), 2000);
-                    }
-                  }}
-                >
-                  <i className="far fa-copy"></i>
-                </span>
-              )}
-
-              <span>
-                Public token: <span>{publicToken}</span>
-              </span>
-            </p>
-            <p className="text-align-center">
-              Status: {beaconConnection ? "Connected" : "Disconnected"}
-            </p>
-          </div>
-        </div>
-        <div id="footer">
-          <img src="built-with-taquito.png" alt="Built with Taquito" />
-        </div>
-      </div>
-    );
-  } else if (userAddress && !isNaN(userBalance)) {
-    return (
-      <div className="main-box">
-        <h1>Taquito Boilerplate</h1>
-        <div id="tabs">
-          <div
-            id="transfer"
-            className={activeTab === "transfer" ? "active" : ""}
-            onClick={() => setActiveTab("transfer")}
-          >
-            Make a transfer
-          </div>
-          <div
-            id="contract"
-            className={activeTab === "contract" ? "active" : ""}
-            onClick={() => setActiveTab("contract")}
-          >
-            Interact with a contract
-          </div>
-        </div>
-        <div id="dialog">
-          <div id="content">
-            {activeTab === "transfer" ? (
-              <div id="transfers">
-                <h3 className="text-align-center">Make a transfer</h3>
-                <Transfers
-                  Tezos={Tezos}
-                  setUserBalance={setUserBalance}
-                  userAddress={userAddress}
-                />
-              </div>
-            ) : (
-              <div id="increment-decrement">
-                <h3 className="text-align-center">
-                  Current counter: <span>{storage}</span>
-                </h3>
-                <UpdateContract
-                  contract={contract}
-                  setUserBalance={setUserBalance}
-                  Tezos={Tezos}
-                  userAddress={userAddress}
-                  setStorage={setStorage}
-                />
-              </div>
-            )}
-            <p>
-              <i className="far fa-file-code"></i>&nbsp;
-              <a
-                href={`https://better-call.dev/ghostnet/${contractAddress}/operations`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {contractAddress}
-              </a>
-            </p>
-            <p>
-              <i className="far fa-address-card"></i>&nbsp;
-              <a
-                href={`https://ghostnet.tzkt.io/${userAddress}/operations/`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {userAddress}
-              </a>
-            </p>
-            <p>
-              <i className="fas fa-piggy-bank"></i>&nbsp;
-              {(userBalance / 1000000).toLocaleString("en-US")} ꜩ
-            </p>
-          </div>
-          <DisconnectButton
-            wallet={wallet}
-            setPublicToken={setPublicToken}
-            setUserAddress={setUserAddress}
-            setUserBalance={setUserBalance}
-            setWallet={setWallet}
-            setTezos={setTezos}
-            setBeaconConnection={setBeaconConnection}
-          />
-        </div>
-        <div id="footer">
-          <img src="built-with-taquito.png" alt="Built with Taquito" />
-        </div>
-      </div>
-    );
-  } else if (!publicToken && !userAddress && !userBalance) {
-    return (
-      <div className="main-box">
-        <div className="title">
-          <h1>Taquito React template</h1>
-          <a href="https://app.netlify.com/start/deploy?repository=https://github.com/ecadlabs/taquito-react-template">
-            <img
-              src="https://www.netlify.com/img/deploy/button.svg"
-              alt="netlify-button"
-            />
-          </a>
-        </div>
-        <div id="dialog">
-          <header>Welcome to the Taquito React template!</header>
-          <div id="content">
-            <p>Hello!</p>
-            <p>
-              This is a template Tezos dApp built using Taquito. It's a starting
-              point for you to hack on and build your own dApp for Tezos.
-              <br />
-              If you have not done so already, go to the{" "}
-              <a
-                href="https://github.com/ecadlabs/taquito-react-template"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Taquito React template Github page
-              </a>{" "}
-              and click the <em>"Use this template"</em> button.
-            </p>
-            <p>Go forth and Tezos!</p>
-          </div>
-          <ConnectButton
-            Tezos={Tezos}
-            setContract={setContract}
-            setPublicToken={setPublicToken}
-            setWallet={setWallet}
-            setUserAddress={setUserAddress}
-            setUserBalance={setUserBalance}
-            setStorage={setStorage}
-            contractAddress={contractAddress}
-            setBeaconConnection={setBeaconConnection}
-            wallet={wallet}
-          />
-        </div>
-        <div id="footer">
-          <img src="built-with-taquito.png" alt="Built with Taquito" />
-        </div>
-      </div>
-    );
-  } else {
-    return <div>An error has occurred</div>;
-  }
-};
-
-export default App;

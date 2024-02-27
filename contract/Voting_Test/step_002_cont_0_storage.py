@@ -1,0 +1,1 @@
+sp.record(candidateA_votes = 0, candidateB_votes = 0, total_votes = 0, voters = {})

@@ -1,0 +1,45 @@
+Comment...
+ h1: Voting Test
+Creating contract KT1TezoooozzSmartPyzzSTATiCzzzwwBFA1
+ -> (Pair 0 (Pair 0 (Pair 0 {})))
+file Voting_Test/step_002_cont_0_storage.tz
+file Voting_Test/step_002_cont_0_storage.json
+file Voting_Test/step_002_cont_0_storage.py
+file Voting_Test/step_002_cont_0_types.py
+file Voting_Test/step_002_cont_0_contract.tz contract Voting
+file Voting_Test/step_002_cont_0_contract.json contract Voting
+file Voting_Test/step_003_cont_0_params.py
+file Voting_Test/step_003_cont_0_params.tz
+file Voting_Test/step_003_cont_0_params.json
+Executing vote_for_candidate_A(())...
+ -> (Pair 1 (Pair 0 (Pair 1 {Elt "tz1VFa9yj1oLbjFA4xd4F4mHtw321arKHV72" True})))
+file Voting_Test/step_004_cont_0_params.py
+file Voting_Test/step_004_cont_0_params.tz
+file Voting_Test/step_004_cont_0_params.json
+Executing vote_for_candidate_A(())...
+ -> (Pair 2 (Pair 0 (Pair 2 {Elt "tz1VFa9yj1oLbjFA4xd4F4mHtw321arKHV72" True; Elt "tz1W3fFuaBCGJNwM4NEKTXmjz3v4y7PcBiJV" True})))
+file Voting_Test/step_005_cont_0_params.py
+file Voting_Test/step_005_cont_0_params.tz
+file Voting_Test/step_005_cont_0_params.json
+Executing vote_for_candidate_A(())...
+ -> (Pair 3 (Pair 0 (Pair 3 {Elt "tz1Pt8JUz3E6AUT18J8GftNta4D99fNudofR" True; Elt "tz1VFa9yj1oLbjFA4xd4F4mHtw321arKHV72" True; Elt "tz1W3fFuaBCGJNwM4NEKTXmjz3v4y7PcBiJV" True})))
+file Voting_Test/step_006_cont_0_params.py
+file Voting_Test/step_006_cont_0_params.tz
+file Voting_Test/step_006_cont_0_params.json
+Executing vote_for_candidate_B(())...
+ -> (Pair 3 (Pair 1 (Pair 4 {Elt "tz1LFq1KuCC2m8qPukRNzNrmH2kVprxeAiJU" True; Elt "tz1Pt8JUz3E6AUT18J8GftNta4D99fNudofR" True; Elt "tz1VFa9yj1oLbjFA4xd4F4mHtw321arKHV72" True; Elt "tz1W3fFuaBCGJNwM4NEKTXmjz3v4y7PcBiJV" True})))
+file Voting_Test/step_007_cont_0_params.py
+file Voting_Test/step_007_cont_0_params.tz
+file Voting_Test/step_007_cont_0_params.json
+Executing vote_for_candidate_B(())...
+ -> (Pair 3 (Pair 2 (Pair 5 {Elt "tz1LFq1KuCC2m8qPukRNzNrmH2kVprxeAiJU" True; Elt "tz1Pt8JUz3E6AUT18J8GftNta4D99fNudofR" True; Elt "tz1VFa9yj1oLbjFA4xd4F4mHtw321arKHV72" True; Elt "tz1W3fFuaBCGJNwM4NEKTXmjz3v4y7PcBiJV" True; Elt "tz1WFkQhwk3RrdVg5iec7xPwJ71EyDRo5BvB" True})))
+file Voting_Test/step_008_cont_0_params.py
+file Voting_Test/step_008_cont_0_params.tz
+file Voting_Test/step_008_cont_0_params.json
+Executing reset_voting(())...
+ -> (Pair 0 (Pair 0 (Pair 0 {})))
+file Voting_Test/step_009_cont_0_params.py
+file Voting_Test/step_009_cont_0_params.tz
+file Voting_Test/step_009_cont_0_params.json
+Executing vote_for_candidate_B(())...
+ -> (Pair 0 (Pair 1 (Pair 1 {Elt "tz1LFq1KuCC2m8qPukRNzNrmH2kVprxeAiJU" True})))

@@ -1,0 +1,74 @@
+parameter (or (unit %reset_voting) (or (unit %vote_for_candidate_A) (unit %vote_for_candidate_B)));
+storage   (pair (nat %candidateA_votes) (pair (nat %candidateB_votes) (pair (nat %total_votes) (big_map %voters address bool))));
+code
+  {
+    UNPAIR;     # @parameter : @storage
+    IF_LEFT
+      {
+        DROP;       # @storage
+        # == reset_voting ==
+        # self.data.voters = sp.big_map({}) # @storage
+        EMPTY_BIG_MAP address bool; # big_map address bool : @storage
+        UPDATE 6;   # @storage
+        # self.data.candidateA_votes = sp.nat(0) # @storage
+        PUSH nat 0; # nat : @storage
+        UPDATE 1;   # @storage
+        # self.data.candidateB_votes = sp.nat(0) # @storage
+        PUSH nat 0; # nat : @storage
+        UPDATE 3;   # @storage
+        # self.data.total_votes = sp.nat(0) # @storage
+        PUSH nat 0; # nat : @storage
+        UPDATE 5;   # @storage
+      }
+      {
+        IF_LEFT
+          {
+            DROP;       # @storage
+            # == vote_for_candidate_A ==
+            # self.data.voters[sp.sender] = True # @storage
+            DUP;        # @storage : @storage
+            GET 6;      # big_map address bool : @storage
+            PUSH (option bool) (Some True); # option bool : big_map address bool : @storage
+            SENDER;     # @sender : option bool : big_map address bool : @storage
+            UPDATE;     # big_map address bool : @storage
+            UPDATE 6;   # @storage
+            # self.data.candidateA_votes = self.data.candidateA_votes + 1 # @storage
+            DUP;        # @storage : @storage
+            CAR;        # nat : @storage
+            PUSH nat 1; # nat : nat : @storage
+            ADD;        # nat : @storage
+            UPDATE 1;   # @storage
+            # self.data.total_votes = self.data.total_votes + 1 # @storage
+            DUP;        # @storage : @storage
+            GET 5;      # nat : @storage
+            PUSH nat 1; # nat : nat : @storage
+            ADD;        # nat : @storage
+            UPDATE 5;   # @storage
+          }
+          {
+            DROP;       # @storage
+            # == vote_for_candidate_B ==
+            # self.data.voters[sp.sender] = True # @storage
+            DUP;        # @storage : @storage
+            GET 6;      # big_map address bool : @storage
+            PUSH (option bool) (Some True); # option bool : big_map address bool : @storage
+            SENDER;     # @sender : option bool : big_map address bool : @storage
+            UPDATE;     # big_map address bool : @storage
+            UPDATE 6;   # @storage
+            # self.data.candidateB_votes = self.data.candidateB_votes + 1 # @storage
+            DUP;        # @storage : @storage
+            GET 3;      # nat : @storage
+            PUSH nat 1; # nat : nat : @storage
+            ADD;        # nat : @storage
+            UPDATE 3;   # @storage
+            # self.data.total_votes = self.data.total_votes + 1 # @storage
+            DUP;        # @storage : @storage
+            GET 5;      # nat : @storage
+            PUSH nat 1; # nat : nat : @storage
+            ADD;        # nat : @storage
+            UPDATE 5;   # @storage
+          }; # @storage
+      }; # @storage
+    NIL operation; # list operation : @storage
+    PAIR;       # pair (list operation) @storage
+  };
